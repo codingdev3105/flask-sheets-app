@@ -1,0 +1,6 @@
+# Cache Python
+__pycache__/
+*.pyc
+
+# Credentials Google
+credentials.json
