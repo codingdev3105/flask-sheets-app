@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <div class="title-home">
+    <img src="{{ url_for('static', filename='images/sheet-icon.png') }}" alt="logo" class="logo">
+    <h1>Gestion des Commandes</h1>
+    <img src="{{ url_for('static', filename='images/instagram.png') }}" alt="logo" class="logo">
+  </div>
+  
+  <div class="btn-group">
+    <!-- <a href="{{ url_for('manuel') }}" class="btn">➕ Insérer Manuellement</a> -->
+    <a href="{{ url_for('auto') }}" class="btn">⚙️ Insérer Automatiquement</a>
+    <a href="{{ url_for('afficher') }}" class="btn">📋 Afficher Commandes</a>
+  </div>
+</div>
+{% endblock %}

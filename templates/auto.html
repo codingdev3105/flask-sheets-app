@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Insertion Automatique</h2>
+  <form class="insert-box" method="POST" action="{{ url_for('auto') }}" onsubmit="showLoader()">
+    <textarea id="data-input"
+              name="data" 
+              class="big-input"
+              placeholder="Nom Prénom&#10;Téléphone 1 / Téléphone 2&#10;Wilaya&#10;Commune&#10;Type d'envoi (domicile/bureau)&#10;Produit&#10;Prix XXXX da&#10;Livr XXXX da&#10;Total XXXX da&#10;Référence (ex: r127)">{{ request.form.data or "" }}</textarea>
+    <button type="submit" class="btn">📥 Insérer</button>
+    <button type="button" class="btn danger" onclick="clearInput()">🧹 Vider</button>
+  </form>
+
+  <!-- Loader -->
+  <div id="loader" class="loader" style="display:none;">
+    ⏳ Insertion en cours...
+  </div>
+
+  {% if message %}
+  <div id="alert-box" class="alert {{ status }}">
+    {{ message }}
+  </div>
+  {% endif %}
+
+  <a href="{{ url_for('home') }}" class="back">⬅ Retour</a>
+</div>
+
+<script>
+  function showLoader() {
+    document.getElementById("loader").style.display = "block";
+  }
+
+  function clearInput() {
+    document.getElementById("data-input").value = "";
+    const alertBox = document.getElementById("alert-box");
+    if (alertBox) {
+      alertBox.style.display = "none";
+    }
+  }
+
+  // 🚀 Si insertion réussie => vider automatiquement l'input
+  window.addEventListener("DOMContentLoaded", function() {
+    const alertBox = document.getElementById("alert-box");
+    if (alertBox && alertBox.classList.contains("success")) {
+      document.getElementById("data-input").value = "";
+    }
+  });
+</script>
+{% endblock %}

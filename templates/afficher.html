@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>📋 Liste des Commandes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Référence</th>
+        <th>Nom du client</th>
+        <th>Téléphone</th>
+        <th>Produit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in commandes %}
+      <tr>
+        <td data-label="Référence">#{{ c['reference'] }}</td>
+        <td data-label="Nom du client">{{ c['nom et prenom du client \n (obligatoire)'] }}</td>
+        <td data-label="Téléphone" class="phone">{{ c['telephone \n (obligatoire)'] }}</td>
+        <td data-label="Produit">{{ c['produit'] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Navigation -->
+  <div class="pagination">
+    {% if page > 1 %}
+      <a href="{{ url_for('afficher', page=page-1) }}">⬅ Précédent</a>
+    {% endif %}
+    {% if page * per_page < total %}
+      <a href="{{ url_for('afficher', page=page+1) }}">Suivant ➡</a>
+    {% endif %}
+  </div>
+
+  <a href="{{ url_for('home') }}" class="back">⬅ Retour</a>
+</div>
+{% endblock %}
