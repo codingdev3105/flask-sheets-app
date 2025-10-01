@@ -97,7 +97,7 @@ def parse_commande(message, wilayas):
                 typedenvoi = "bureau"
 
         # Produit (peut être sur plusieurs lignes)
-        elif idx == 5 and line and not re.search(r"(prix|livr|total|^r\d+)", line, re.I):
+        elif not re.search(r"(prix|livr|total|^r\d+)", line, re.I) and line and idx >= 5:
             produit_lines.append(line)
 
         # Prix
@@ -156,6 +156,7 @@ def parse_commande(message, wilayas):
         "reference": reference,
         "station": station,
     }
+
 
 # --- Récupérer les communes depuis Google Sheet ---
 def GetCommunesFromSheet(code_wilaya):
