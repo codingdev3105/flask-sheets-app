@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from sheets_outils import connect_to_sheet
+from rapidfuzz import process
 
 
 
@@ -58,7 +59,7 @@ def parse_commande(message, wilayas):
     typedenvoi = ""
     adresse = ""
     station = ""
-    produit = ""
+    produit_lines = []
     prix = 0
     livraison = 0
     total = 0
@@ -71,11 +72,11 @@ def parse_commande(message, wilayas):
         if idx == 0 and line:
             name = line
 
-        # Téléphones (convertis en int)
+        # Téléphones
         elif idx == 1 and re.search(r"\d", line):
             phones = re.findall(r"(?:\+213|0)(\d{9})", line)
             if phones:
-                tels.extend([int(p) for p in phones])  # conversion en int
+                tels.extend([int(p) for p in phones])
 
         # Wilaya
         elif idx == 2 and line:
@@ -95,9 +96,9 @@ def parse_commande(message, wilayas):
             elif "bureau" in line.lower():
                 typedenvoi = "bureau"
 
-        # Produit
-        elif idx == 5 and line and not re.search(r"(prix|livr|total|^r\d+)", line, re.I):
-            produit = line
+        # Produit (peut être sur plusieurs lignes)
+        elif not re.search(r"(prix|livr|total|^r\d+)", line, re.I) and line and idx >= 5:
+            produit_lines.append(line)
 
         # Prix
         elif "prix" in line.lower():
@@ -111,7 +112,7 @@ def parse_commande(message, wilayas):
             if match:
                 livraison = int(match.group())
 
-        # Total (garde uniquement la valeur du message)
+        # Total
         elif "total" in line.lower():
             match = re.search(r"\d+", line)
             if match:
@@ -122,6 +123,9 @@ def parse_commande(message, wilayas):
             match = re.search(r"\d+", line)
             if match:
                 reference = int(match.group())
+
+    # Fusion des lignes produit
+    produit = " ".join(produit_lines).strip()
 
     # Vérification stricte
     if (
@@ -152,6 +156,7 @@ def parse_commande(message, wilayas):
         "reference": reference,
         "station": station,
     }
+
 
 
 
