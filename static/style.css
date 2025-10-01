@@ -177,7 +177,7 @@ tbody tr:hover {
         justify-content: space-between;
         padding: 10px;
         border: none;
-        border-bottom: 1px solid #c3c3c3;
+        border-bottom: 1px solid #efefef;
     }
  
     td:last-child {
@@ -186,9 +186,6 @@ tbody tr:hover {
     
     td:first-child {
         border-top: 1px solid #9b9b9b;
-        background-color: rgb(46, 105, 221);
-        border-radius: 10px;
-        color: white;
     }
 
     td:before {
