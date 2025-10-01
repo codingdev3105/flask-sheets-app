@@ -1,0 +1,6 @@
+{
+    "update.mode": "default",
+    "extensions.autoUpdate": true,
+    "telemetry.enableTelemetry": false,
+    "telemetry.enableCrashReporter": false
+}
