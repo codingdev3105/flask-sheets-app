@@ -1,4 +1,3 @@
-from thefuzz import process
 import re
 from datetime import datetime
 from sheets_outils import connect_to_sheet
