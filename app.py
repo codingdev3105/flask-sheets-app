@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from sheets_outils import connect_to_sheet
 from parese_commande import InsererCommande
+import os
 
 app = Flask(__name__)
 
@@ -100,4 +101,5 @@ def afficher():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)

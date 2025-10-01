@@ -4,3 +4,7 @@ __pycache__/
 
 # Credentials Google
 credentials.json
+
+
+# Ignore environment files
+.env

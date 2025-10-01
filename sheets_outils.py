@@ -37,17 +37,17 @@ def connect_to_sheet(sheet_id: str, worksheet_name: str = "Sheet1"):
     return worksheet
 
 
-if __name__ == "__main__":
-    # ⚠️ à remplacer par ton ID de Google Sheet
-    SHEET_ID = "1HJ0Caotw7JKrtmR0f-ReRFWgtJu6fmvSGJIV901XTUw"
-    WORKSHEET_NAME = "code wilayas"
+# if __name__ == "__main__":
+#     # ⚠️ à remplacer par ton ID de Google Sheet
+#     SHEET_ID = "1HJ0Caotw7JKrtmR0f-ReRFWgtJu6fmvSGJIV901XTUw"
+#     WORKSHEET_NAME = "code wilayas"
 
-    sheet = connect_to_sheet(SHEET_ID, WORKSHEET_NAME)
+#     sheet = connect_to_sheet(SHEET_ID, WORKSHEET_NAME)
 
-    # Exemple : lecture des données
-    data = sheet.get_all_records()
-    print("Extrait de données :", data[:5])
+#     # Exemple : lecture des données
+#     data = sheet.get_all_records()
+#     print("Extrait de données :", data[:5])
 
-    # Exemple : ajout d'une ligne
-    # sheet.append_row(["Ali", "Produit X", 3])
-    print("Connexion réussie ")
+#     # Exemple : ajout d'une ligne
+#     # sheet.append_row(["Ali", "Produit X", 3])
+#     print("Connexion réussie ")
