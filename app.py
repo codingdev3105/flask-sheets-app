@@ -1,34 +1,41 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from sheets_outils import connect_to_sheet
+from sheets_outils import connect_to_sheet  # Gardez-le si vous l'utilisez ailleurs, mais on passe à une connexion unique
 from parese_commande import InsererCommande
 import os
 
 app = Flask(__name__)
 
+# --- Connexion Google Sheets (optimisée : une seule authentification) ---
+SHEET_ID = "1HJ0Caotw7JKrtmR0f-ReRFWgtJu6fmvSGJIV901XTUw"
 
+# Créez UN SEUL client global au démarrage (adaptez le chemin des credentials pour Render)
+# Sur Render, uploadez le JSON comme secret env var et decodez-le si besoin
+# Exemple : creds_dict = json.loads(os.environ.get('GOOGLE_CREDENTIALS'))
+# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+# Remplacez 'path/to/your/credentials.json' par votre setup Render
+creds = ServiceAccountCredentials.from_json_keyfile_name('path/to/your/credentials.json', scope)
+gc = gspread.authorize(creds)
+spreadsheet = gc.open_by_key(SHEET_ID)
 
-# --- Connexion Google Sheets ---
-SHEET_ID = "1HJ0Caotw7JKrtmR0f-ReRFWgtJu6fmvSGJIV901XTUw"  
-WORKSHEET_NAME = "commandes"         
+# Référencez les worksheets une fois (plus besoin de connect_to_sheet multiple)
+sheet_commandes = spreadsheet.worksheet("commandes")
+sheet_wilayas = spreadsheet.worksheet("code wilayas")
+sheet_stations = spreadsheet.worksheet("code stations")
 
-sheet = connect_to_sheet(SHEET_ID, WORKSHEET_NAME)
-
-def GetWilayaFromSheet() :
-    sheet = connect_to_sheet(SHEET_ID, "code wilayas")  
-    data = sheet.get_all_records()
+def GetWilayaFromSheet():
+    data = sheet_wilayas.get_all_records()
     return data
 
 def GetStationsFromSheet():
-    sheet = connect_to_sheet(SHEET_ID, "code stations")
-    values = sheet.get("A:B")  # récupère uniquement colonnes A et B
+    values = sheet_stations.get("A:B")  # récupère uniquement colonnes A et B
     headers, rows = values[0], values[1:]
     data = [dict(zip(headers, row)) for row in rows]
     return data
 
-
-# Recuperer les wilayas et les stations from google sheet
+# Récupérez les wilayas et les stations from google sheet (chargé une fois au démarrage)
 wilayas = GetWilayaFromSheet()
 stations = GetStationsFromSheet()
 
@@ -38,17 +45,15 @@ stations = GetStationsFromSheet()
 def home():
     return render_template("home.html")
 
-
 @app.route("/manuel", methods=["GET", "POST"])
 def manuel():
     if request.method == "POST":
         client_name = request.form.get("client")
         produit = request.form.get("produit")
         quantite = request.form.get("quantite")
-        sheet.append_row([client_name, produit, quantite])
+        sheet_commandes.append_row([client_name, produit, quantite])  # Utilisez sheet_commandes optimisé
         return redirect(url_for("afficher"))
     return render_template("manuel.html")
-
 
 # --- Route Flask ---
 @app.route("/auto", methods=["GET", "POST"])
@@ -57,10 +62,11 @@ def auto():
     status = None  # "success" ou "error"
     print("hello from auto 4")
     if request.method == "POST":
-        
         raw_data = request.form.get("data")
         print(raw_data)
         try:
+            # Lazy loading : import seulement si POST
+            from parese_commande import InsererCommande
             if not wilayas:
                 raise ValueError("Wilaya introuvable depuis google sheet.")
             if not stations:
@@ -75,14 +81,12 @@ def auto():
 
     return render_template("auto.html", message=message, status=status)
 
-
-
 @app.route("/afficher")
 def afficher():
     page = int(request.args.get("page", 1))  # num de page dans l'URL ?page=2
     per_page = 7
 
-    commandes = sheet.get_all_records()
+    commandes = sheet_commandes.get_all_records()  # Utilisez sheet_commandes optimisé
     total = len(commandes)
 
     # Découper la liste
@@ -98,8 +102,6 @@ def afficher():
         per_page=per_page
     )
 
-
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port,debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False)  # debug=False pour prod/Render

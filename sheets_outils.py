@@ -51,3 +51,21 @@ if __name__ == "__main__":
     # Exemple : ajout d'une ligne
     # sheet.append_row(["Ali", "Produit X", 3])
     print("Connexion réussie ")
+    # import requests
+
+    # url = "https://app.noest-dz.com/api/public/get/trackings/info"
+
+    # payload = {
+    #     "api_token": "TWJhktoMHmCgprsgKejtDEiH4u9j2ehryTZ",
+    #     "user_guid": "N5JXNIKQ",
+    #     "trackings": ["N5J-35C-11446627"]
+    # }
+
+    # response = requests.post(url, json=payload)
+
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     print(data)
+    # else:
+    #     print("Erreur:", response.status_code, response.text)
+
