@@ -10,15 +10,8 @@ app = Flask(__name__)
 # --- Connexion Google Sheets (optimisée : une seule authentification) ---
 SHEET_ID = "1HJ0Caotw7JKrtmR0f-ReRFWgtJu6fmvSGJIV901XTUw"
 
-# Créez UN SEUL client global au démarrage (adaptez le chemin des credentials pour Render)
-# Sur Render, uploadez le JSON comme secret env var et decodez-le si besoin
-# Exemple : creds_dict = json.loads(os.environ.get('GOOGLE_CREDENTIALS'))
-# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-# Remplacez 'path/to/your/credentials.json' par votre setup Render
-creds = ServiceAccountCredentials.from_json_keyfile_name('path/to/your/credentials.json', scope)
-gc = gspread.authorize(creds)
-spreadsheet = gc.open_by_key(SHEET_ID)
+spreadsheet = connect_to_sheet(SHEET_ID)
+
 
 # Référencez les worksheets une fois (plus besoin de connect_to_sheet multiple)
 sheet_commandes = spreadsheet.worksheet("commandes")
